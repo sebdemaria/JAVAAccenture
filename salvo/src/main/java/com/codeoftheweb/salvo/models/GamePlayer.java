@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class GamePlayer {
@@ -76,7 +77,22 @@ public class GamePlayer {
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
+        //le hasgo un map a player pq dentro de player estan los datos del mismo y con el dto los obtengo
         dto.put("player", this.getPlayer().makePlayerDTO());
         return dto;
+    }
+
+    //creo un dto para obtener la data de los ships creando una lista de estos datos
+    // para luego enviarla a appcontroller
+    public List<Object> makeGamePlayerShipsDTO() {
+        //retorno get ships en forma de lista collected
+        return this.getShips()
+        //transformo datos de getships en stream
+        .stream()
+        //creo un map de los datos de shipdto
+        .map(ship -> ship.makeShipDTO())
+        //collect todos los datos de arriba en forma de lista
+        .collect(Collectors.toList());
+
     }
 }

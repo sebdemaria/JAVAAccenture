@@ -3,9 +3,7 @@ package com.codeoftheweb.salvo.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Ship {
@@ -60,5 +58,15 @@ public class Ship {
 
     public void setLocations(ArrayList<String> locations) {
         this.locations = locations;
+    }
+
+    //creo un dto de ships para obtener toda la data de estos ships, location y type, para enviarla a gameplayer
+    public Map<String, Object> makeShipDTO() {
+        //el linkedhashmap me ordena los datos de type y location obtenidos
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("type", this.getShipType());
+        dto.put("locations", this.getLocations());
+        //retorno dto que es lo que almacena los datos de type y locations
+        return dto;
     }
 }
