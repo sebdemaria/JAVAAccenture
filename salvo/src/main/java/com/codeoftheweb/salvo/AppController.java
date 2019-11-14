@@ -41,11 +41,10 @@ import java.util.stream.Collectors;
         @RequestMapping("/game_view/{gamePlayerId}")
         //quiero obtener un gamePlayer segun su ID para obtener info de sus barcos
         public Map<String, Object> getGamePlayerDTO(@PathVariable Long gamePlayerId) {
-            //creo un dto para recopilar la data (linkedhashmap obtiene la data y la ordena)
+            //creo un dto para recopilar la data, recurro a gamerepo para encontrar segun su id al player,
+            // obtener el dato desde la clase game que refiere al repo gameplayer
+            // obteniendo el player y guardandolo en el dto
             Map<String, Object> dto = gameRepository.findById(gamePlayerId).get().makeGameDTO();
-            //recurro a gamerepo para encontrar segun su id al player obtener el dato desde la clase game
-            // que refiere al repo gameplayer obteniendo el player y guardandolo en el dto
-
             //recuro a gameplayerrepo para encontrar la info del player especifico, obteniendo mediante el dto
             //makegameplayershipsdto la info de los ships mediante el dto makeshipsdto
             // y trayendo una lista de todos los barcos de este player
