@@ -3,7 +3,7 @@ $(function() {
 });
 function updateView(data) {
     let htmlList = data.map(function (game) {
-        return  '<li>' + new Date(game.created).toLocaleString() + ' ' + game.gamePlayers.map(function(gamePlayer) { return gamePlayer.player.email}).join(',')  +'</li>';
+        return  '<li>' + new Date(game.creationDate).toLocaleString() + ' ' + game.gamePlayers.map(function(gamePlayer) { return gamePlayer.player.email}).join(',')  +'</li>';
     }).join('');
   document.getElementById("games-list").innerHTML = htmlList;
 }

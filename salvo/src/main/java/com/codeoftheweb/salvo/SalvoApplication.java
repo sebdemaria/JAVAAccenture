@@ -1,13 +1,7 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.models.Game;
-import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
-import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
-import com.codeoftheweb.salvo.repositories.GameRepository;
-import com.codeoftheweb.salvo.repositories.PlayerRepository;
-import com.codeoftheweb.salvo.repositories.ShipRepository;
+import com.codeoftheweb.salvo.models.*;
+import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +20,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository repository, GameRepository gRepository, GamePlayerRepository gpRepository, ShipRepository sRepository) {
+	public CommandLineRunner initData(PlayerRepository repository, GameRepository gRepository, GamePlayerRepository gpRepository, ShipRepository sRepository, SalvoRepository slRepository) {
 		return (args) -> {
 			// save a couple of players
             Player player_1 = new Player("mail1@gmail.com");
@@ -91,6 +85,25 @@ public class SalvoApplication {
             sRepository.save(ship_1);
             sRepository.save(ship_2);
             sRepository.save(ship_3);
+
+            //create locations array for salvoes parameter
+            List<String> locationsSalvo1 = new ArrayList<>();
+            locationsSalvo1.add("H1");
+            locationsSalvo1.add("H2");
+            List<String> locationsSalvo2 = new ArrayList<>();
+            locationsSalvo2.add("F1");
+            locationsSalvo2.add("F3");
+            List<String> locationsSalvo3 = new ArrayList<>();
+            locationsSalvo3.add("C2");
+            locationsSalvo3.add("C3");
+
+            //save salvoes
+            List<Salvo> salvoes = new ArrayList<>();
+            salvoes.add(new Salvo(gamePlayer_1, 1, locationsSalvo1));
+            salvoes.add(new Salvo(gamePlayer_2, 1, locationsSalvo2));
+            salvoes.add(new Salvo(gamePlayer_3, 1, locationsSalvo3));
+
+            slRepository.saveAll(salvoes);
 		};
 	}
 }

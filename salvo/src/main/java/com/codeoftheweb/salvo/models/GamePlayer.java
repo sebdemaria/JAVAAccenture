@@ -16,6 +16,10 @@ public class GamePlayer {
 
     private Date joinDate;
 
+    //en mappedby se pone el nombre de la variable privada que creaste en la otra clase que estas vinculando
+    @OneToMany(mappedBy = "gamePlayer", fetch=FetchType.EAGER)
+    private Set<Salvo> salvoes;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "player_id")
     private Player player;
@@ -69,6 +73,14 @@ public class GamePlayer {
         return ships;
     }
 
+
+    public Set<Salvo> getSalvoes() {
+        return salvoes;
+    }
+
+    public void setSalvoes(Set<Salvo> salvoes) {
+        this.salvoes = salvoes;
+    }
     public Ship addShip(String shipType, List<String> locations){
         Ship ship = new Ship(shipType, locations, this);
         return ship;
