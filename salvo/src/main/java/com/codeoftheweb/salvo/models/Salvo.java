@@ -23,6 +23,7 @@ public class Salvo {
     private long turn;
 
     @ElementCollection
+    @Column(name = "salvoLocation")
     private List<String> locations;
 
     public Salvo() {};

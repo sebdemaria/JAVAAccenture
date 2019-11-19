@@ -2,15 +2,13 @@ package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.models.Game;
 import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
-import com.codeoftheweb.salvo.repositories.GameRepository;
-import com.codeoftheweb.salvo.repositories.SalvoRepository;
-import com.codeoftheweb.salvo.repositories.ShipRepository;
+import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.ManyToOne;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,9 @@ import static java.util.stream.Collectors.toList;
 
         @Autowired
         GamePlayerRepository gamePlayerRepository;
+
+        @Autowired
+        ScoreRepository scoreRepository;
 
         // hago un request para solicitar info a los games
         @RequestMapping("/games")
@@ -65,7 +66,7 @@ import static java.util.stream.Collectors.toList;
                 .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
                         .stream()
                         .map(salvo -> salvo.makeSalvoDTO()))
-                .collect(toList()));
+                        .collect(toList()));
             return dto;
                 }
 }

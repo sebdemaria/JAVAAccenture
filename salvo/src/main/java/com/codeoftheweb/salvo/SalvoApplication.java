@@ -20,7 +20,7 @@ public class SalvoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository repository, GameRepository gRepository, GamePlayerRepository gpRepository, ShipRepository sRepository, SalvoRepository slRepository) {
+	public CommandLineRunner initData(PlayerRepository repository, GameRepository gRepository, GamePlayerRepository gpRepository, ShipRepository sRepository, SalvoRepository slRepository, ScoreRepository scrRepository) {
 		return (args) -> {
 			// save a couple of players
             Player player_1 = new Player("mail1@gmail.com");
@@ -39,7 +39,6 @@ public class SalvoApplication {
 
 
             // save a couple of games
-
             Date dateGame1 = new Date();
             Game game_1 = new Game(dateGame1);
             Game game_2 = new Game(Date.from(dateGame1.toInstant().plusSeconds(3600)));
@@ -104,6 +103,20 @@ public class SalvoApplication {
             salvoes.add(new Salvo(gamePlayer_3, 1, locationsSalvo3));
 
             slRepository.saveAll(salvoes);
+
+            //create & save finish dates for scores parameters
+            Date finishDate1 = new Date();
+            Date finishDate2 = new Date();
+            Date finishDate3 = new Date();
+
+            //save scores
+            List<Score> scores = new ArrayList<>();
+            scores.add(new Score(game_1, player_1,2, finishDate1));
+            scores.add(new Score(game_2, player_2,3, finishDate2));
+            scores.add(new Score(game_3, player_3,1, finishDate3));
+
+            scrRepository.saveAll(scores);
+
 		};
 	}
 }
