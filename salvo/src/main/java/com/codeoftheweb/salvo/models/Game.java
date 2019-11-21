@@ -52,6 +52,14 @@ public class Game {
         this.gamePlayers = gamePlayers;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
     public Map<String, Object> makeGameDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
@@ -60,6 +68,10 @@ public class Game {
                 .stream()
                 .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
+        dto.put("scores", this.getScores()
+        .stream()
+        .map(score -> score.makeScoreDTO())
+        .collect(Collectors.toList()));
         return dto;
     }
 }

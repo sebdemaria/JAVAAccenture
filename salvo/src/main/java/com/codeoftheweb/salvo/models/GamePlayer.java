@@ -95,6 +95,8 @@ public class GamePlayer {
         dto.put("id", this.getId());
         //le hasgo un map a player pq dentro de player estan los datos del mismo y con el dto los obtengo
         dto.put("player", this.getPlayer().makePlayerDTO());
+        // if (this.getScore() != null){
+        // dto.put("scores", this.getScore().getScore());}
         return dto;
     }
 
@@ -109,6 +111,7 @@ public class GamePlayer {
         .map(ship -> ship.makeShipDTO())
         //collect todos los datos de arriba en forma de lista
         .collect(Collectors.toList());
-
     }
+
+
 }

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Player {
@@ -70,5 +71,40 @@ public class Player {
         dto.put("id", this.getId());
         dto.put("email", this.getUsername());
         return dto;
+    }
+
+    public Map<String, Object> makeLeaderboardDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", this.getId());
+        dto.put("username", this.getUsername());
+        dto.put("scores", this.getTotalScores());
+        dto.put("wins", this.getWins());
+        dto.put("losses", this.getLosses());
+        dto.put("ties", this.getTies());
+        return dto;
+    }
+
+    public long getWins(){
+        return this.getScores()
+                .stream()
+                .filter(score -> score.getScore() == 1).count();
+    }
+
+    public long getLosses(){
+        return this.getScores()
+                .stream()
+                .filter(score -> score.getScore() == 0).count();
+    }
+
+    public long getTies(){
+        return this.getScores()
+                .stream()
+                .filter(score -> score.getScore() == 0.5).count();
+    }
+
+    public Double getTotalScores(){
+        return this.getScores()
+                .stream()
+                .mapToDouble(Score::getScore).sum();
     }
 }

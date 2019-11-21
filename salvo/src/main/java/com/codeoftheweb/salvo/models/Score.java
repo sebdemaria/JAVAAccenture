@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.models;
 
 import org.hibernate.annotations.GenericGenerator;
+import sun.awt.image.ImageWatched;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -23,13 +24,13 @@ public class Score {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    public long score;
+    public double score;
 
     public Date finishDate;
 
     public Score (){};
 
-    public Score(Game game, Player player, long score, Date finishDate){
+    public Score(Game game, Player player, double score, Date finishDate){
         this.game = game;
         this.player = player;
         this.score = score;
@@ -56,7 +57,7 @@ public class Score {
         this.player = player;
     }
 
-    public long getScore() {
+    public double getScore() {
         return score;
     }
 
@@ -72,4 +73,11 @@ public class Score {
         this.finishDate = finishDate;
     }
 
+    public Map<String, Object> makeScoreDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("player", this.getPlayer().getId());
+        dto.put("score", this.getScore());
+        dto.put("finishDate", this.getFinishDate().getTime());
+        return dto;
+    }
 }
