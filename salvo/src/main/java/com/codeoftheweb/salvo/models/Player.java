@@ -17,11 +17,14 @@ public class Player {
 
     private String username;
 
+    private String password;
+
     @OneToMany(mappedBy = "player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
 
     @OneToMany(mappedBy = "player", fetch=FetchType.EAGER)
     private Set<Score> scores;
+
 
     public Player(){}
 
@@ -30,8 +33,9 @@ public class Player {
         return id;
     }
 
-    public Player(String username){
+    public Player(String username, String password){
         this.username = username;
+        this.password = password;
     }
 
     public String getUsername() {
@@ -106,5 +110,13 @@ public class Player {
         return this.getScores()
                 .stream()
                 .mapToDouble(Score::getScore).sum();
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        password = password;
     }
 }
