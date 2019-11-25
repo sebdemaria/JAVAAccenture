@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -34,16 +36,21 @@ public class SalvoApplication {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
 	@Bean
 	public CommandLineRunner initData(PlayerRepository repository, GameRepository gRepository, GamePlayerRepository gpRepository, ShipRepository sRepository, SalvoRepository slRepository, ScoreRepository scrRepository) {
 		return (args) -> {
 			// save a couple of players
-            Player player_1 = new Player("mail1@gmail.com", "pw1");
-			Player player_2 = new Player("mail2@gmail.com", "pw2");
-            Player player_3 = new Player("mail3@gmail.com", "pw3");
-            Player player_4 = new Player("mail4@gmail.com", "pw4");
-            Player player_5 = new Player("mail5@gmail.com", "pw5");
-            Player player_6 = new Player("mail6@gmail.com", "pw6");
+            Player player_1 = new Player("mail1@gmail.com", passwordEncoder().encode("pw1"));
+			Player player_2 = new Player("mail2@gmail.com", passwordEncoder().encode("pw2"));
+            Player player_3 = new Player("mail3@gmail.com", passwordEncoder().encode("pw3"));
+            Player player_4 = new Player("mail4@gmail.com", passwordEncoder().encode("pw4"));
+            Player player_5 = new Player("mail5@gmail.com", passwordEncoder().encode("pw5"));
+            Player player_6 = new Player("mail6@gmail.com", passwordEncoder().encode("pw6"));
 
             repository.save(player_1);
             repository.save(player_2);
@@ -173,13 +180,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/rest/**").hasAuthority("USER")
+                //.antMatchers("/rest/**").hasAuthority("USER")
+                .antMatchers("/*").permitAll()
                 .and()
                 .formLogin();
 
         http.formLogin()
-                .usernameParameter("username")
-                .passwordParameter("password")
+                .usernameParameter("name")
+                .passwordParameter("pwd")
                 .loginPage("/api/login");
 
         http.logout().logoutUrl("/api/logout");
