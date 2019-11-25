@@ -12,10 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 import static java.util.stream.Collectors.toList;
@@ -66,8 +63,15 @@ import static java.util.stream.Collectors.toList;
 
         @RequestMapping("/game_view/{gamePlayerId}")
         //quiero obtener un gamePlayer segun su ID para obtener info de sus barcos
-        public Map<String, Object> getGamePlayerDTO(@PathVariable Long gamePlayerId) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
+        public ResponseEntity<Map<String, Object>> getGamePlayerDTO(@PathVariable Long gamePlayerId, Authentication authentication) {
+            GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
+            if (isGuest(authentication)) {
+                return new ResponseEntity<>(makeMap("Error", "Usuario no logueado"), HttpStatus.UNAUTHORIZED);
+            }
+
+            if (gamePlayer.getPlayer().getId() != playerAuth(authentication).getId()) {
+                return new ResponseEntity<>(makeMap("Error", "Acceso restringido"), HttpStatus.UNAUTHORIZED);
+            }
 
             //creo un dto para recopilar la data, recurro a gamerepo para encontrar segun su id al player,
             // obtener el dato desde la clase game que refiere al repo gameplayer
@@ -79,15 +83,15 @@ import static java.util.stream.Collectors.toList;
             dto.put("ships", gamePlayerRepository.findById(gamePlayerId).get().makeGamePlayerShipsDTO());
             //
             dto.put("salvoes", gamePlayer.getGame().getGamePlayers()
-                .stream()
-                .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
-                        .stream()
-                        .map(salvo -> salvo.makeSalvoDTO()))
-                        .collect(toList()));
-            return dto;
-                }
+                    .stream()
+                    .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
+                            .stream()
+                            .map(salvo -> salvo.makeSalvoDTO()))
+                    .collect(toList()));
+            return new ResponseEntity<>(dto, HttpStatus.ACCEPTED);
+        }
 
-        @RequestMapping("/leaderboard")
+    @RequestMapping("/leaderboard")
             List<Object> getPlayerAll() {
                 return playerRepository.findAll()
                         .stream()
@@ -117,6 +121,12 @@ import static java.util.stream.Collectors.toList;
 
         private Player playerAuth(Authentication authentication){
             return playerRepository.findByUsername(authentication.getName());
+        }
+
+        private Map<String, Object> makeMap(String key, Object value) {
+            Map<String, Object> map = new HashMap<>();
+            map.put(key, value);
+            return map;
         }
 }
 
