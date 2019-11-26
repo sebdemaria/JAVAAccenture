@@ -144,19 +144,19 @@ import static java.util.stream.Collectors.toList;
             }
 
         @RequestMapping(path = "/players", method = RequestMethod.POST)
-        public ResponseEntity<Object> register(
+        public ResponseEntity<Map<String, Object>> register(
                 @RequestParam String email, @RequestParam String password) {
 
             if (email.isEmpty() || password.isEmpty()) {
-                return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>(makeMap("Error", "Missing data"), HttpStatus.FORBIDDEN);
             }
 
-            if (playerRepository.findByUsername(email) !=  null) {
-                return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+            if (playerRepository.findByUsername(email).orElse(null) !=  null) {
+                return new ResponseEntity<>(makeMap("Error", "Name already in use"), HttpStatus.FORBIDDEN);
             }
 
             playerRepository.save(new Player(email, passwordEncoder.encode(password)));
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>(makeMap("Error", "Usuario creado"), HttpStatus.CREATED);
         }
 
         private boolean isGuest(Authentication authentication) {
