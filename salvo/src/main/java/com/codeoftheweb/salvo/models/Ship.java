@@ -16,15 +16,15 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     public GamePlayer gamePlayer;
 
-    private String shipType;
+    private String type;
     @ElementCollection
-    private List<String> locations = new ArrayList<>();
+    private List<String> shipLocations = new ArrayList<>();
 
     public Ship(){};
 
-    public Ship(String shipType, List<String> locations, GamePlayer gamePlayer){
-        this.shipType = shipType;
-        this.locations = locations;
+    public Ship(String type, List<String> shipLocations, GamePlayer gamePlayer){
+        this.type = type;
+        this.shipLocations = shipLocations;
         this.gamePlayer = gamePlayer;
     }
 
@@ -32,8 +32,8 @@ public class Ship {
         return gamePlayer;
     }
 
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
+    public void setShipLocations(List<String> shipLocations) {
+        this.shipLocations = shipLocations;
     }
 
     public long getId() {
@@ -44,28 +44,28 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public String getShipType() {
-        return shipType;
+    public String getType() {
+        return type;
     }
 
-    public void setShipType(String shipType) {
-        this.shipType = shipType;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public List<String> getLocations() {
-        return locations;
+    public List<String> getShipLocations() {
+        return shipLocations;
     }
 
     public void setLocations(ArrayList<String> locations) {
-        this.locations = locations;
+        this.shipLocations = locations;
     }
 
     //creo un dto de ships para obtener toda la data de estos ships, location y type, para enviarla a gameplayer
     public Map<String, Object> makeShipDTO() {
         //el linkedhashmap me ordena los datos de type y location obtenidos
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("type", this.getShipType());
-        dto.put("locations", this.getLocations());
+        dto.put("type", this.getType());
+        dto.put("locations", this.getShipLocations());
         //retorno dto que es lo que almacena los datos de type y locations
         return dto;
     }
