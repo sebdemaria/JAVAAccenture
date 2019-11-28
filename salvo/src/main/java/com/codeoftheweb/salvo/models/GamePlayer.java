@@ -113,5 +113,10 @@ public class GamePlayer {
         .collect(Collectors.toList());
     }
 
-
+    public GamePlayer getOpponent(){
+        return this.getGame().getGamePlayers().stream()
+                .filter(gamePlayer -> gamePlayer.getId() != this.getId())
+                .findFirst()
+                .orElse(new GamePlayer());
+    }
 }

@@ -1,9 +1,6 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.models.Game;
-import com.codeoftheweb.salvo.models.GamePlayer;
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.models.Ship;
+import com.codeoftheweb.salvo.models.*;
 import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -128,8 +125,9 @@ import static java.util.stream.Collectors.toList;
                         .stream()
                         .map(salvo -> salvo.makeSalvoDTO()))
                 .collect(toList()));
-        dto.put("ships", new ArrayList<>());
+        dto.put("ships", gamePlayerRepository.getOne(gamePlayerId).makeGamePlayerShipsDTO());
         dto.put("salvoes", new ArrayList<>());
+        dto.put("gameState", getState(gamePlayer, gamePlayer.getOpponent()));
         hits.put("self", new ArrayList<>());
         hits.put("opponent", new ArrayList<>());
         dto.put("hits", hits);
@@ -163,8 +161,34 @@ import static java.util.stream.Collectors.toList;
         return new ResponseEntity<>(makeMap("ships", "Ships added"), HttpStatus.CREATED);
     }
 
+        @RequestMapping("/games/players/{gamePlayerId}/salvoes")
+        public ResponseEntity<Map<String, Object>> saveShips(@PathVariable Long gamePlayerId, @RequestBody Salvo salvoes, Authentication authentication) {
 
-        @RequestMapping("/leaderboard")
+            GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
+
+            if (isGuest(authentication)) {
+                return new ResponseEntity<>(makeMap("Error", "Usuario no logueado"), HttpStatus.UNAUTHORIZED);
+            }
+
+            if (gamePlayerRepository.findById(gamePlayerId).get().getId() != gamePlayerId) {
+                return new ResponseEntity<>(makeMap("Error", "El usuario no existe"), HttpStatus.UNAUTHORIZED);
+            }
+
+            if (playerAuth(authentication).getId() != gamePlayer.getPlayer().getId()) {
+                return new ResponseEntity<>(makeMap("Error", "El usuario no coincide"), HttpStatus.UNAUTHORIZED);
+            }
+
+            if (gamePlayer.getSalvoes().stream().filter(salvo1 -> salvo1.getTurn() == salvoes.getTurn()).count() > 0) {
+                return new ResponseEntity<>(makeMap("Error", "Ya tienes salvoes colocados"), HttpStatus.FORBIDDEN);
+            }
+
+            salvoes.setGamePlayer(gamePlayer);
+            salvoRepository.save(salvoes);
+            return new ResponseEntity<>(makeMap("salvoes", "Salvoes added"), HttpStatus.CREATED);
+        }
+
+
+            @RequestMapping("/leaderboard")
             List<Object> getPlayerAll() {
                 return playerRepository.findAll()
                         .stream()
@@ -201,5 +225,22 @@ import static java.util.stream.Collectors.toList;
             map.put(key, value);
             return map;
         }
+
+    public String getState(GamePlayer gamePlayerSelf, GamePlayer gamePlayerOpponent) {
+        if (gamePlayerSelf.getShips().isEmpty()) {
+            return "PLACESHIPS";
+        }
+        if (gamePlayerSelf.getGame().getGamePlayers().size() == 1) {
+            return "WAITINGFOROPP";
+        }
+        if (gamePlayerSelf.getId() < gamePlayerOpponent.getId()) {
+            return "PLAY";
+        }
+        if (gamePlayerSelf.getId() > gamePlayerOpponent.getId()) {
+            return "WAIT";
+        }
+        return "LOST";
+    }
 }
+
 
