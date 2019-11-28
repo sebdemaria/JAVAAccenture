@@ -117,7 +117,7 @@ import static java.util.stream.Collectors.toList;
         //recuro a gameplayerrepo para encontrar la info del player especifico, obteniendo mediante el dto
         //makegameplayershipsdto la info de los ships mediante el dto makeshipsdto
         // y trayendo una lista de todos los barcos de este player
-        dto.put("ships", gamePlayerRepository.findById(gamePlayerId).get().makeGamePlayerShipsDTO());
+        // dto.put("ships", gamePlayerRepository.findById(gamePlayerId).get().makeGamePlayerShipsDTO());
         //
         dto.put("salvoes", gamePlayer.getGame().getGamePlayers()
                 .stream()
@@ -126,7 +126,7 @@ import static java.util.stream.Collectors.toList;
                         .map(salvo -> salvo.makeSalvoDTO()))
                 .collect(toList()));
         dto.put("ships", gamePlayerRepository.getOne(gamePlayerId).makeGamePlayerShipsDTO());
-        dto.put("salvoes", new ArrayList<>());
+        // dto.put("salvoes", new ArrayList<>());
         dto.put("gameState", getState(gamePlayer, gamePlayer.getOpponent()));
         hits.put("self", new ArrayList<>());
         hits.put("opponent", new ArrayList<>());
