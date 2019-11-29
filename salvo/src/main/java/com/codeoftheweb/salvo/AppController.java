@@ -128,7 +128,7 @@ import static java.util.stream.Collectors.toList;
         dto.put("ships", gamePlayerRepository.getOne(gamePlayerId).makeGamePlayerShipsDTO());
         // dto.put("salvoes", new ArrayList<>());
         dto.put("gameState", getState(gamePlayer, gamePlayer.getOpponent()));
-        hits.put("self", new ArrayList<>());
+        hits.put("self", gamePlayer.makeHitsDTO());
         hits.put("opponent", new ArrayList<>());
         dto.put("hits", hits);
         return new ResponseEntity<>(dto, HttpStatus.ACCEPTED);

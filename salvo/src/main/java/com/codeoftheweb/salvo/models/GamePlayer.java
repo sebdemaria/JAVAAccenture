@@ -119,4 +119,9 @@ public class GamePlayer {
                 .findFirst()
                 .orElse(new GamePlayer());
     }
+
+    public List<Object> makeHitsDTO() {
+
+
+    }
 }
