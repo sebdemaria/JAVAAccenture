@@ -185,8 +185,11 @@ import static java.util.stream.Collectors.toList;
                 return new ResponseEntity<>(makeMap("Error", "Ya tienes salvoes colocados"), HttpStatus.FORBIDDEN);
             }
 
+            salvoes.setTurn(gamePlayer.getSalvoes().size()+1);
             salvoes.setGamePlayer(gamePlayer);
+
             salvoRepository.save(salvoes);
+
             return new ResponseEntity<>(makeMap("salvoes", "Salvoes added"), HttpStatus.CREATED);
         }
 
@@ -228,6 +231,8 @@ import static java.util.stream.Collectors.toList;
             map.put(key, value);
             return map;
         }
+
+
 
     public String getState(GamePlayer gamePlayerSelf, GamePlayer gamePlayerOpponent) {
         if (gamePlayerSelf.getShips().isEmpty()) {

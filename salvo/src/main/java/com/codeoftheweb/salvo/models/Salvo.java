@@ -51,11 +51,11 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public Long getTurn() {
+    public long getTurn() {
         return turn;
     }
 
-    public void setTurn(Long turn) {
+    public void setTurn(long turn) {
         this.turn = turn;
     }
 
