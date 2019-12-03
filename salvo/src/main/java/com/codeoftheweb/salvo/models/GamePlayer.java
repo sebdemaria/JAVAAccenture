@@ -90,6 +90,50 @@ public class GamePlayer {
         return ship;
     }
 
+    public List<String> setHitLocations(Salvo salvo){
+        return this.getShips()
+                .stream()
+                .flatMap(ship -> ship.getShipLocations()
+                        .stream()
+                        .flatMap(shipLoc -> salvo
+                            .getSalvoLocations()
+                            .stream()
+                            .filter(salvoLoc -> shipLoc.contains(salvoLoc))))
+                .collect(Collectors.toList());
+    }
+
+    private Long getShipHitsByTypeDTO(Set<Ship> ships, String shipType, Salvo salvo) {
+        Ship ship = ships.stream().filter(ship1 -> ship1.getType().equals(shipType)).findFirst().get();
+        return salvo.salvoLocations(ship);
+    }
+
+    private Long getShipHitsDTO(Set<Ship> ships, String shipType, Salvo salvo) {
+        Ship ship = ships.stream().filter(ship1 -> ship1.getType().equals(shipType)).findFirst().get();
+        return this.getOpponent().getSalvoes().stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn())
+                .map(salvo1 -> salvo1.salvoLocations(ship)).reduce(Long::sum).get();
+    }
+
+    public Map<String, Object> HitsByTurnDTO(Set<Ship> ships, Salvo salvo, Set<Salvo> salvos){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("carrierHits", this.getShipHitsByTypeDTO(ships, "carrier", salvo));
+        dto.put("battleshipHits", this.getShipHitsByTypeDTO(ships, "battleship", salvo));
+        dto.put("submarineHits", this.getShipHitsByTypeDTO(ships, "submarine", salvo));
+        dto.put("destroyerHits", this.getShipHitsByTypeDTO(ships, "destroyer", salvo));
+        dto.put("patrolboatHits", this.getShipHitsByTypeDTO(ships, "patrolboat", salvo));
+        dto.put("carrier", this.getShipHitsDTO(ships,"carrier", salvo));
+        dto.put("battleship", this.getShipHitsDTO(ships, "battleship", salvo));
+        dto.put("submarine", this.getShipHitsDTO(ships, "submarine", salvo));
+        dto.put("destroyer", this.getShipHitsDTO(ships, "destroyer", salvo));
+        dto.put("patrolboat", this.getShipHitsDTO(ships, "patrolboat", salvo));
+        return dto;
+    }
+
+    public Long missedHits(Salvo salvo){
+        Long missed = 5 - this.setHitLocations(salvo).stream().count();
+
+        return missed;
+    }
+
     public Map<String, Object> makeGamePlayerDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
@@ -120,8 +164,19 @@ public class GamePlayer {
                 .orElse(new GamePlayer());
     }
 
-    public List<Object> makeHitsDTO() {
+    public List<Object> makeHitsDTO(GamePlayer gamePlayer) {
+        List<Object> dtoList = new ArrayList<>();
+        if (gamePlayer.getSalvoes() != null) {
+            for (Salvo a: gamePlayer.getSalvoes()) {
+                Map<String,Object> dto = new LinkedHashMap<>();
+                dto.put("turn", a.getTurn());
+                dto.put("hitLocations", this.setHitLocations(a));
+                dto.put("damages", this.HitsByTurnDTO(ships, a, gamePlayer.getSalvoes()));
+                dto.put("missed", this.missedHits(a));
+                dtoList.add(dto);
+            }
 
-
+        }
+        return dtoList;
     }
 }

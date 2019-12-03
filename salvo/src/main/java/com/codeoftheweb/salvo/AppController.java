@@ -101,7 +101,6 @@ import static java.util.stream.Collectors.toList;
         if (isGuest(authentication)) {
             return new ResponseEntity<>(makeMap("Error", "Usuario no logueado"), HttpStatus.UNAUTHORIZED);
         }
-
         GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
         Game game = gamePlayer.getGame();
 
@@ -113,7 +112,6 @@ import static java.util.stream.Collectors.toList;
         // obtener el dato desde la clase game que refiere al repo gameplayer
         // obteniendo el player y guardandolo en el dto
         Map<String, Object> dto = gamePlayerRepository.getOne(gamePlayerId).getGame().makeGameDTO();
-        Map<String, Object> hits = new LinkedHashMap<>();
         //recuro a gameplayerrepo para encontrar la info del player especifico, obteniendo mediante el dto
         //makegameplayershipsdto la info de los ships mediante el dto makeshipsdto
         // y trayendo una lista de todos los barcos de este player
@@ -123,15 +121,20 @@ import static java.util.stream.Collectors.toList;
                 .stream()
                 .flatMap(gamePlayer1 -> gamePlayer1.getSalvoes()
                         .stream()
-                        .map(salvo -> salvo.makeSalvoDTO()))
+                        .map(salvo1 -> salvo1.makeSalvoDTO()))
                 .collect(toList()));
         dto.put("ships", gamePlayerRepository.getOne(gamePlayerId).makeGamePlayerShipsDTO());
         // dto.put("salvoes", new ArrayList<>());
         dto.put("gameState", getState(gamePlayer, gamePlayer.getOpponent()));
-        hits.put("self", gamePlayer.makeHitsDTO());
-        hits.put("opponent", new ArrayList<>());
-        dto.put("hits", hits);
+        dto.put("hits", this.hitDTO(gamePlayer));
         return new ResponseEntity<>(dto, HttpStatus.ACCEPTED);
+    }
+
+    private Map<String, Object> hitDTO(GamePlayer gamePlayer){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("self", gamePlayer.makeHitsDTO(gamePlayer.getOpponent()));
+        dto.put("opponent", gamePlayer.getOpponent().makeHitsDTO(gamePlayer));
+        return dto;
     }
 
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
