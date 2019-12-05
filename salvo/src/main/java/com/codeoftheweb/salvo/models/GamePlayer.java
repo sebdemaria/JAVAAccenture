@@ -102,15 +102,36 @@ public class GamePlayer {
                 .collect(Collectors.toList());
     }
 
-    private Long getShipHitsByTypeDTO(Set<Ship> ships, String shipType, Salvo salvo) {
+    private long getShipHitsByTypeDTO(Set<Ship> ships, String shipType, Salvo salvo) {
         Ship ship = ships.stream().filter(ship1 -> ship1.getType().equals(shipType)).findFirst().get();
-        return salvo.salvoLocations(ship);
+        return salvo.salvoHitAmount(ship);
     }
 
-    private Long getShipHitsDTO(Set<Ship> ships, String shipType, Salvo salvo) {
+    private long getShipHitsDTO(Set<Ship> ships, String shipType, Salvo salvo) {
         Ship ship = ships.stream().filter(ship1 -> ship1.getType().equals(shipType)).findFirst().get();
         return this.getOpponent().getSalvoes().stream().filter(salvo1 -> salvo1.getTurn() <= salvo.getTurn())
-                .map(salvo1 -> salvo1.salvoLocations(ship)).reduce(Long::sum).get();
+                .map(salvo1 -> salvo1.salvoHitAmount(ship)).reduce(Long::sum).get();
+    }
+
+    private long getShipHitsTotalDTO(Set<Ship> ships, String shipType) {
+        Ship ship = ships.stream().filter(ship1 -> ship1.getType().equals(shipType)).findFirst().get();
+        return this.getOpponent().getSalvoes().stream().mapToLong(salvo1 -> salvo1.salvoHitAmount(ship)).sum();
+    }
+
+    public long totalHits(){
+        if (ships.isEmpty()){return -1;}
+        List<Long> totalHits = new ArrayList();
+        List<Salvo> salvos = new ArrayList<>(this.getOpponent().getSalvoes());
+
+        totalHits.add(this.getShipHitsTotalDTO(ships,"carrier"));
+        totalHits.add(this.getShipHitsTotalDTO(ships, "battleship"));
+        totalHits.add(this.getShipHitsTotalDTO(ships, "submarine"));
+        totalHits.add(this.getShipHitsTotalDTO(ships, "destroyer"));
+        totalHits.add(this.getShipHitsTotalDTO(ships, "patrolboat"));
+
+        long sum = totalHits.stream().reduce(Long::sum).get();
+
+        return sum;
     }
 
     public Map<String, Object> HitsByTurnDTO(Set<Ship> ships, Salvo salvo, Set<Salvo> salvos){

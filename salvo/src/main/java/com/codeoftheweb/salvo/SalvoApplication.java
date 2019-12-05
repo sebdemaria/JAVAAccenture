@@ -134,7 +134,7 @@ public class SalvoApplication {
             Date finishDate5 = new Date();
             Date finishDate6 = new Date();
 
-            //save scores
+         /*   //save scores
             List<Score> scores = new ArrayList<>();
             scores.add(new Score(game_1, player_1,0.5, finishDate1));
             scores.add(new Score(game_1, player_2,1, finishDate2));
@@ -143,7 +143,7 @@ public class SalvoApplication {
             scores.add(new Score(game_3, player_5,1, finishDate5));
             scores.add(new Score(game_3, player_6,0.5, finishDate6));
 
-            scrRepository.saveAll(scores);
+            scrRepository.saveAll(scores);*/
 
 		};
 	}

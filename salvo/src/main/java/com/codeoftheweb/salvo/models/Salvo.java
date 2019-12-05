@@ -67,7 +67,7 @@ public class Salvo {
         this.salvoLocations = salvoLocations;
     }
 
-    public Long salvoLocations(Ship ship){
+    public long salvoHitAmount(Ship ship){
         return this.getSalvoLocations()
                 .stream()
                 .filter(salvo1 -> ship.getShipLocations().contains(salvo1))
