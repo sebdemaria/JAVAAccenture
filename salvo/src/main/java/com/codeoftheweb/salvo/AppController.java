@@ -134,31 +134,6 @@ import static java.util.stream.Collectors.toList;
         return dto;
     }
 
-    public void addScore(GamePlayer gamePlayer, GamePlayer gamePlayerSelf, GamePlayer gamePlayerOpponent){
-        if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("WON")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(),
-                    1, new Date()));
-        }else if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("WON")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getOpponent().getPlayer(),
-                    1, new Date()));
-        }
-        if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("LOST")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(),
-                    0, new Date()));
-        }else if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("LOST")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getOpponent().getPlayer(),
-                    0, new Date()));
-        }
-        if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("TIE")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(),
-                    0.5, new Date()));
-        }else if (this.getState(gamePlayerSelf, gamePlayerOpponent).equals("TIE")){
-            scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getOpponent().getPlayer(),
-                    0.5, new Date()));
-        }
-
-    }
-
     public boolean existsScore(Game game) {
         if (game.getScores().isEmpty()) {
             return false;

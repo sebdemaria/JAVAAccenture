@@ -41,8 +41,11 @@ public class Game {
         this.creationDate = creationDate;
     }
 
-    public Set<GamePlayer> getGamePlayers() {
-        return gamePlayers;
+    public List<GamePlayer> getGamePlayers() {
+        return this.gamePlayers
+                    .stream()
+                    .sorted(Comparator.comparing(GamePlayer::getId))
+                    .collect(Collectors.toList());
     }
 
     public void setGamePlayers(Set<GamePlayer> gamePlayers) {
