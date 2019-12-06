@@ -269,6 +269,11 @@ import static java.util.stream.Collectors.toList;
         if (gamePlayerSelf.getGame().getGamePlayers().size() == 1) {
             return "WAITINGFOROPP";
         }
+
+        if (gamePlayerOpponent.getShips().size() == 0){
+            return "WAIT";
+        }
+
         if (gamePlayerOpponent.getSalvoes().size() == gamePlayerSelf.getSalvoes().size()
                 && gamePlayerOpponent.totalHits() == gamePlayerOpponent.getShips()
                 .stream().flatMap(ship1 -> ship1.getShipLocations().stream()).count())
@@ -316,6 +321,7 @@ import static java.util.stream.Collectors.toList;
         if (gamePlayerSelf.getSalvoes().size() > gamePlayerOpponent.getSalvoes().size()) {
             return "WAIT";
         }
+
         if (gamePlayerSelf.getSalvoes().size() == gamePlayerOpponent.getSalvoes().size()) {
             if (gamePlayerSelf.getId() < gamePlayerOpponent.getId()) {
                 return "PLAY";
