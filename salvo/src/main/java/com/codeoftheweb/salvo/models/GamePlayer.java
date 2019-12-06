@@ -188,7 +188,10 @@ public class GamePlayer {
     public List<Object> makeHitsDTO(GamePlayer gamePlayer) {
         List<Object> dtoList = new ArrayList<>();
         if (gamePlayer.getSalvoes() != null) {
-            for (Salvo a: gamePlayer.getSalvoes()) {
+            List<Salvo> salvosDelOpp = gamePlayer.getSalvoes().stream()
+                    .sorted(Comparator.comparing(Salvo::getTurn)).collect(Collectors.toList());
+
+            for (Salvo a: salvosDelOpp) {
                 Map<String,Object> dto = new LinkedHashMap<>();
                 dto.put("turn", a.getTurn());
                 dto.put("hitLocations", this.setHitLocations(a));
